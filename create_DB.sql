@@ -9,11 +9,9 @@ create table room_type (
     PRIMARY KEY (room_type_id)
 );
 create table employee_type (
-    employee_type_id INT AUTO_INCREMENT,
-    type_name_employee VARCHAR(50) NOT NULL,
-
-)
-
+    employee_type_id INT AUTO_INCREMENT PRIMARY KEY,
+    employee_type_name VARCHAR(50) NOT NULL
+);
 CREATE table address (
     address_id int AUTO_INCREMENT,
     address VARCHAR(60) NOT NULL,
@@ -31,12 +29,12 @@ CREATE table building(
 );
 
  create table customer (
-    customer_id INT(8) AUTO_INCREMENT,
+    customer_id INT AUTO_INCREMENT,
     first_name VARCHAR(20) NOT NULL,
     last_name VARCHAR(20) NOT NULL,
-    phone VARCHAR(20) NOT NULL,
-    adderss_id INT(8),
-    FOREIGN KEY (adderss_id)
+    phone VARCHAR(20),
+    address_id INT,
+    FOREIGN KEY (address_id)
     REFERENCES address (address_id),
     PRIMARY KEY(customer_id)  
 );
@@ -59,14 +57,16 @@ create table room  (
 );
 
 create table employee  (
-    employee_id INT,
-    employee_type VARCHAR(20) NOT NULL,
+    employee_id INT AUTO_INCREMENT,
+    employee_type INT NOT NULL,
     phone VARCHAR(20) NOT NULL,
     first_name VARCHAR(20),
     last_name VARCHAR(20),
     address_id INT,
     FOREIGN KEY (address_id)
     REFERENCES address (address_id),
+    FOREIGN KEY (employee_type)
+    REFERENCES employee_type (employee_type_id),
     PRIMARY KEY(employee_id) 
         
 );
@@ -107,13 +107,13 @@ create table orders (
  );
 
 create table order_rooms (
-    employee_id INT NOT NULL,
+    room_number INT NOT NULL,
     order_number INT NOT NULL,
-    FOREIGN KEY (employee_id)
-    REFERENCES employee (employee_id),
-    FOREIGN KEY (order_number)
+    FOREIGN KEY (room_number)
+    REFERENCES room (room_number),
+    FOREIGN KEY (order_number),
     REFERENCES orders (order_number),
-    PRIMARY KEY(employee_id, order_number) 
+    PRIMARY KEY(room_number, order_number) 
 );
 
 
