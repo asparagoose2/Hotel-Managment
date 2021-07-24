@@ -2,12 +2,17 @@ CREATE database hotel_project;
 use hotel_project;
 
 create table room_type (
-    room_type_id int AUTO_INCREMENT,
+    room_type_id INT AUTO_INCREMENT,
     type_name VARCHAR(50) NOT NULL,
     num_of_beds INT not NULL,
     price_per_night FLOAT(5,2) NOT NULL,
     PRIMARY KEY (room_type_id)
 );
+create table employee_type (
+    employee_type_id INT AUTO_INCREMENT,
+    type_name_employee VARCHAR(50) NOT NULL,
+
+)
 
 CREATE table address (
     address_id int AUTO_INCREMENT,
@@ -29,44 +34,61 @@ CREATE table building(
     customer_id INT(8) AUTO_INCREMENT,
     first_name VARCHAR(20) NOT NULL,
     last_name VARCHAR(20) NOT NULL,
-    phone VARCHAR(10) NOT NULL,
+    phone VARCHAR(20) NOT NULL,
     adderss_id INT(8),
     FOREIGN KEY (adderss_id)
     REFERENCES address (address_id),
     PRIMARY KEY(customer_id)  
-     
+);
+
+create table room_status (
+    room_status_id INT AUTO_INCREMENT PRIMARY KEY,
+    status_name varchar(40) NOT NULL
 );
 
 create table room  (
-    room_number INT(8) AUTO_INCREMENT,
-    room_type VARCHAR(20) NOT NULL,
-    building_id INT(8),
-    floor INT(8),
-    status VARCHAR(20),
-    PRIMARY KEY(room_number)   
+    room_number INT AUTO_INCREMENT,
+    room_type INT NOT NULL,
+    building_id INT,
+    floor INT,
+    room_status INT,
+    FOREIGN KEY (room_status) REFERENCES room_status (room_status_id),
+    FOREIGN KEY (room_type) REFERENCES room_type (room_type_id),
+    PRIMARY KEY(room_number)
+
 );
 
 create table employee  (
-    employee_id INT(8),
+    employee_id INT,
     employee_type VARCHAR(20) NOT NULL,
-    phone VARCHAR(11),
+    phone VARCHAR(20) NOT NULL,
     first_name VARCHAR(20),
     last_name VARCHAR(20),
     address_id INT,
     FOREIGN KEY (address_id)
     REFERENCES address (address_id),
-    PRIMARY KEY(employee_id)     
+    PRIMARY KEY(employee_id) 
+        
 );
 
-create table room_log ( 
-    room_number INT(8),
-    employee_id INT(8),
-    action VARCHAR(30) NOT NULL,
+create table room_status_log ( 
+    room_number INT,
+    employee_id INT,
+    new_stauts int NOT NULL,
     time TIMESTAMP DEFAULT (now()), 
     PRIMARY KEY(room_number, employee_id),
     FOREIGN KEY (room_number) REFERENCES room(room_number),
     FOREIGN KEY (employee_id) REFERENCES employee(employee_id),
-    CONSTRAINT CHK_Action CHECK (action IN ("clean", "status change"))
+    FOREIGN KEY (new_stauts) REFERENCES room_status(room_status_id)
+);
+
+create table clean_log ( 
+    room_number INT(8),
+    employee_id INT(8),
+    time TIMESTAMP DEFAULT (now()), 
+    PRIMARY KEY(room_number, employee_id, time),
+    FOREIGN KEY (room_number) REFERENCES room(room_number),
+    FOREIGN KEY (employee_id) REFERENCES employee(employee_id)
 );
  
 
