@@ -74,12 +74,12 @@ create table employee  (
 create table room_status_log ( 
     room_number INT,
     employee_id INT,
-    new_stauts int NOT NULL,
+    new_status int NOT NULL,
     time TIMESTAMP DEFAULT (now()), 
-    PRIMARY KEY(room_number, employee_id),
+    PRIMARY KEY(room_number, employee_id, time),
     FOREIGN KEY (room_number) REFERENCES room(room_number),
     FOREIGN KEY (employee_id) REFERENCES employee(employee_id),
-    FOREIGN KEY (new_stauts) REFERENCES room_status(room_status_id)
+    FOREIGN KEY (new_status) REFERENCES room_status(room_status_id)
 );
 
 create table clean_log ( 
@@ -111,9 +111,9 @@ create table order_rooms (
     order_number INT NOT NULL,
     FOREIGN KEY (room_number)
     REFERENCES room (room_number),
-    FOREIGN KEY (order_number),
+    FOREIGN KEY (order_number)
     REFERENCES orders (order_number),
-    PRIMARY KEY(room_number, order_number) 
+    PRIMARY KEY (room_number, order_number) 
 );
 
 
