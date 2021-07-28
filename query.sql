@@ -6,6 +6,10 @@ inner join  room_status rs
 ON room_status = rs.room_status_id;
 
 -- query 2
+SELECT room_number, COUNT(*) 
+FROM order_rooms
+GROUP BY room_number
+ORDER BY COUNT(*) DESC limit 10;
 
 
 -- query 3 all orders in  last 2 weeks  
