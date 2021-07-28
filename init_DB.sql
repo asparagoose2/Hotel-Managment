@@ -15,9 +15,6 @@ insert into building  (building_id, name, capacity) values (1, 'A', 360);
 insert into building  (building_id, name, capacity) values (2, 'B', 300);
 insert into building  (building_id, name, capacity) values (3, 'C', 280);
 
--- Add a random room
-insert into room (room_type, building_id, floor, room_status) values (floor(rand()*4+1), floor(rand()*3+1), floor(rand()*5+1),floor(rand()*3+1));
-
 use sakila;
 
 -- Add customers and their addresses:
@@ -35,6 +32,9 @@ insert into room_type (type_name, num_of_beds, price_per_night) values ("standar
 insert into room_type (type_name, num_of_beds, price_per_night) values ("familly", 4, 525);
 insert into room_type (type_name, num_of_beds, price_per_night) values ("delux", 3, 430);
 
+-- Add a random room
+-- (REPLACED BY PROCEDURE add_rooms()) insert into room (room_type, building_id, floor, room_status) values (floor(rand()*4+1), floor(rand()*3+1), floor(rand()*5+1),floor(rand()*3+1));
+CALL add_rooms(30);
 
 -- Get random check in and check out dates:
 select *, DATE_ADD(check_in,  INTERVAL floor(rand()*11 +1) DAY) check_out from (SELECT FROM_UNIXTIME(RAND() * (UNIX_TIMESTAMP() - UNIX_TIMESTAMP('2020-01-01')) + UNIX_TIMESTAMP('2020-01-01')) check_in) as f;
@@ -44,26 +44,19 @@ CALL addOrder(30);
 -- Or one by one
 insert into orders (check_in, customer_id, employee_id,  check_out)  select  *,floor(rand()*11+1),floor(rand()*10+1), DATE_ADD(check_in,  INTERVAL floor(rand()*10 +1) DAY) check_out from (SELECT FROM_UNIXTIME(RAND() * (UNIX_TIMESTAMP() - UNIX_TIMESTAMP('2020-01-01')) + UNIX_TIMESTAMP('2020-01-01')) check_in) as f;
 
-DECLARE count INT DEFAULT 0;
-WHILE count < 10 DO
-    insert into orders (check_in, customer_id, employee_id,  check_out)  select  *,floor(rand()*11+1),floor(rand()*10+1), DATE_ADD(check_in,  INTERVAL floor(rand()*10 +1) DAY) check_out from (SELECT FROM_UNIXTIME(RAND() * (UNIX_TIMESTAMP() - UNIX_TIMESTAMP('2020-01-01')) + UNIX_TIMESTAMP('2020-01-01')) check_in) as f;
-    SET count = count + 1;
-END WHILE;
-
-
 --Add status log
-insert into room_status_log (room_number, employee_id, new_stauts) values (floor(rand()*28+1),floor(rand()*10+1) , floor(rand()*3+1));
-insert into room_status_log  (time, room_number, employee_id, new_stauts)  select  *,floor(rand()*11+1),floor(rand()*10+1), floor(rand()*3+1)  from (SELECT FROM_UNIXTIME(RAND() * (UNIX_TIMESTAMP() - UNIX_TIMESTAMP('2020-01-01')) + UNIX_TIMESTAMP('2020-01-01')) ) as f;
+insert into room_status_log (room_number, employee_id, new_status) values (floor(rand()*28+1),floor(rand()*10+1) , floor(rand()*3+1));
+insert into room_status_log  (time, room_number, employee_id, new_status)  select  *,floor(rand()*11+1),floor(rand()*10+1), floor(rand()*3+1)  from (SELECT FROM_UNIXTIME(RAND() * (UNIX_TIMESTAMP() - UNIX_TIMESTAMP('2020-01-01')) + UNIX_TIMESTAMP('2020-01-01')) ) as f;
 
 
-select  *,floor(rand()*11+1),floor(rand()*10+1), floor(rand()*3+1)  from (SELECT FROM_UNIXTIME(RAND() * (UNIX_TIMESTAMP() - UNIX_TIMESTAMP('2020-01-01')) + UNIX_TIMESTAMP('2020-01-01')) ) as f;
+-- select  *,floor(rand()*11+1),floor(rand()*10+1), floor(rand()*3+1)  from (SELECT FROM_UNIXTIME(RAND() * (UNIX_TIMESTAMP() - UNIX_TIMESTAMP('2020-01-01')) + UNIX_TIMESTAMP('2020-01-01')) ) as f;
 
 
-insert into order_rooms (room_number, order_number) values (floor(rand()*4+1),floor(rand()*20+1));
+-- insert into order_rooms (room_number, order_number) values (floor(rand()*4+1),floor(rand()*20+1));
 
 
 
-insert into clean_log  (time, room_number, employee_id)  select  *,floor(rand()*10+1),floor(rand()*10+1))  from (SELECT FROM_UNIXTIME(RAND() * (UNIX_TIMESTAMP() - UNIX_TIMESTAMP('2020-01-01')) + UNIX_TIMESTAMP('2020-01-01'))  as f;
+-- insert into clean_log  (time, room_number, employee_id)  select  *,floor(rand()*10+1),floor(rand()*10+1))  from (SELECT FROM_UNIXTIME(RAND() * (UNIX_TIMESTAMP() - UNIX_TIMESTAMP('2020-01-01')) + UNIX_TIMESTAMP('2020-01-01'))  as f;
 
 -- Add clean log
 insert into clean_log (time, room_number, employee_id)  select  *,floor(rand()*10+1),floor(rand()*10+1) from (SELECT FROM_UNIXTIME(RAND() * (UNIX_TIMESTAMP() - UNIX_TIMESTAMP('2020-01-01')) + UNIX_TIMESTAMP('2020-01-01'))) as f;
