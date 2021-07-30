@@ -41,3 +41,14 @@ on c.customer_id = o.customer_id
 GROUP BY c.customer_id, c.first_name, c.last_name
 HAVING num_of_orders > 1;
 
+-- query 7: display incomes by month
+
+select DATE_FORMAT(check_in, "%b %y") Date, SUM(datediff(check_out ,check_in)*price_per_night) total from order_rooms  ro
+inner join room r
+on r.room_number = ro.room_number
+inner join room_type rt
+on rt.room_type_id = r.room_type
+inner join orders o
+on ro.order_number = o.order_number
+group by month(check_in), year(check_in)
+order by  year(check_in), month(check_in)
