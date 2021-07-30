@@ -43,7 +43,7 @@ HAVING num_of_orders > 1;
 
 -- query 7: display incomes by month
 
-select DATE_FORMAT(check_in, "%b %y") Date, SUM(datediff(check_out ,check_in)*price_per_night) total from order_rooms  ro
+select DATE_FORMAT(check_in, "%b %y") date, SUM(datediff(check_out ,check_in)*price_per_night) total from order_rooms  ro
 inner join room r
 on r.room_number = ro.room_number
 inner join room_type rt
