@@ -33,7 +33,6 @@ insert into room_type (type_name, num_of_beds, price_per_night) values ("familly
 insert into room_type (type_name, num_of_beds, price_per_night) values ("delux", 3, 430);
 
 -- Add a random room
--- (REPLACED BY PROCEDURE add_rooms()) insert into room (room_type, building_id, floor, room_status) values (floor(rand()*4+1), floor(rand()*3+1), floor(rand()*5+1),floor(rand()*3+1));
 CALL add_rooms(30);
 
 -- Get random check in and check out dates:
@@ -51,3 +50,4 @@ insert into room_status_log  (time, room_number, employee_id, new_status)  selec
 
 -- Add clean log
 insert into clean_log (time, room_number, employee_id)  select  *,floor(rand()*10+1),floor(rand()*10+1) from (SELECT FROM_UNIXTIME(RAND() * (UNIX_TIMESTAMP() - UNIX_TIMESTAMP('2020-01-01')) + UNIX_TIMESTAMP('2020-01-01'))) as f;
+

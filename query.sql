@@ -1,25 +1,25 @@
 
--- query 1 
+-- query 1: display all rooms and their statusses
 SELECT room_number, status_name
 FROM room
 inner join  room_status rs
 ON room_status = rs.room_status_id;
 
--- query 2
+-- query 2: display top 10 most ordered rooms
 SELECT room_number, COUNT(*) 
 FROM order_rooms
 GROUP BY room_number
 ORDER BY COUNT(*) DESC limit 10;
 
 
--- query 3 all orders in  last 2 weeks  
+-- query 3: display all orders in  last 2 weeks  
 
 SELECT *
 FROM orders
 WHERE order_time  BETWEEN DATE_SUB(now(), INTERVAL 14 DAY) AND (NOW());
 
 
--- query 4 cleaned the most rooms
+-- query 4: display employee who cleaned the most rooms
 
 select e.employee_id, e.first_name, e.last_name, count(*) num_of_room
 from employee e
@@ -36,7 +36,7 @@ inner join customer c
 on o.customer_id = c.customer_id
 where check_out > (now());
 
--- query 6
+-- query 6: display all returning customers (more than 1 order)
 select c.customer_id, c.first_name, c.last_name, count(*) num_of_orders
 from customer c
 inner join orders o
