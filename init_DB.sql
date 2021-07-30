@@ -49,14 +49,5 @@ insert into room_status_log (room_number, employee_id, new_status) values (floor
 insert into room_status_log  (time, room_number, employee_id, new_status)  select  *,floor(rand()*11+1),floor(rand()*10+1), floor(rand()*3+1)  from (SELECT FROM_UNIXTIME(RAND() * (UNIX_TIMESTAMP() - UNIX_TIMESTAMP('2020-01-01')) + UNIX_TIMESTAMP('2020-01-01')) ) as f;
 
 
--- select  *,floor(rand()*11+1),floor(rand()*10+1), floor(rand()*3+1)  from (SELECT FROM_UNIXTIME(RAND() * (UNIX_TIMESTAMP() - UNIX_TIMESTAMP('2020-01-01')) + UNIX_TIMESTAMP('2020-01-01')) ) as f;
-
-
--- insert into order_rooms (room_number, order_number) values (floor(rand()*4+1),floor(rand()*20+1));
-
-
-
--- insert into clean_log  (time, room_number, employee_id)  select  *,floor(rand()*10+1),floor(rand()*10+1))  from (SELECT FROM_UNIXTIME(RAND() * (UNIX_TIMESTAMP() - UNIX_TIMESTAMP('2020-01-01')) + UNIX_TIMESTAMP('2020-01-01'))  as f;
-
 -- Add clean log
 insert into clean_log (time, room_number, employee_id)  select  *,floor(rand()*10+1),floor(rand()*10+1) from (SELECT FROM_UNIXTIME(RAND() * (UNIX_TIMESTAMP() - UNIX_TIMESTAMP('2020-01-01')) + UNIX_TIMESTAMP('2020-01-01'))) as f;
