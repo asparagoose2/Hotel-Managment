@@ -29,9 +29,12 @@ GROUP BY e.employee_id, e.first_name, e.last_name
 ORDER BY num_of_room desc limit 1;
 
 
--- query 5
+-- query 5: display every active orders and their customers
 
-
+select * from orders o 
+inner join customer c
+on o.customer_id = c.customer_id
+where check_out > (now());
 
 -- query 6
 select c.customer_id, c.first_name, c.last_name, count(*) num_of_orders
@@ -41,8 +44,8 @@ on c.customer_id = o.customer_id
 GROUP BY c.customer_id, c.first_name, c.last_name
 HAVING num_of_orders > 1;
 
--- query 7: display incomes by month
 
+-- query 7: display incomes by month
 select DATE_FORMAT(check_in, "%b %y") date, SUM(datediff(check_out ,check_in)*price_per_night) total from order_rooms  ro
 inner join room r
 on r.room_number = ro.room_number
