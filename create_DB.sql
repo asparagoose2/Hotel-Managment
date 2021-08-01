@@ -1,4 +1,5 @@
 -- To create the Databse rub all of the SQL code
+set global log_bin_trust_function_creators = 1;
 CREATE database hotel_project;
 use hotel_project;
 
