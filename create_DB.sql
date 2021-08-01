@@ -1,3 +1,4 @@
+-- To create the Databse rub all of the SQL code
 CREATE database hotel_project;
 use hotel_project;
 
@@ -116,6 +117,136 @@ create table order_rooms (
     PRIMARY KEY (room_number, order_number) 
 );
 
+DELIMITER $$
+
+CREATE PROCEDURE addOrder(
+    IN orders_to_add int
+)
+BEGIN
+    DECLARE counter INT DEFAULT 1;    
+    REPEAT
+        insert into orders (check_in, customer_id, employee_id,  check_out)  select  *,floor(rand()*10+1),floor(rand()*10+1), DATE_ADD(check_in,  INTERVAL floor(rand()*10 +1) DAY) check_out from (SELECT FROM_UNIXTIME(RAND() * (UNIX_TIMESTAMP() - UNIX_TIMESTAMP('2020-01-01')) + UNIX_TIMESTAMP('2020-01-01')) check_in) as f;
+        SET counter = counter + 1;
+    UNTIL counter >= orders_to_add
+    END REPEAT;
+END$$
+
+DELIMITER ;
+
+-- change room(s) status by order number
+DELIMITER $$
+CREATE PROCEDURE change_status(
+    IN in_order_number int,
+    IN in_emp_id INT,
+    IN new_status int
+)
+BEGIN
+    -- Check that new_status is valid
+    IF new_status NOT IN (SELECT room_status_id from room_status where room_status_id = new_status) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Illegal "New Status"';
+    END IF;
+    -- Updates the room(s) status
+    UPDATE room 
+    SET room_status = new_status 
+    where room_number in 
+    (select room_number from order_rooms where order_number = in_order_number);
+    -- Write changes to log
+    INSERT INTO room_status_log (room_number, employee_id, new_status) 
+    select room_number,in_emp_id, new_status 
+    from order_rooms 
+    where order_number = in_order_number;
+end $$
+
+DELIMITER ;
+
+-- Updates Clean
+DELIMITER $$
+CREATE PROCEDURE room_cleaned(
+    IN in_room_number INT,
+    IN in_emp_id INT
+)
+BEGIN
+    -- Check that employee is a housekeeper
+    IF in_emp_id NOT IN (SELECT employee_id from employee where employee_type IN (select employee_type_id from employee_type where employee_type_name = "housekeeping")) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Employee is not a housekeeper';
+    END IF;
+    -- Updates the room status
+    SET @clean_status = 0;
+    SELECT room_status_id INTO @clean_status FROM room_status where status_name = "vacant"; 
+    UPDATE room 
+    SET room_status = @clean_status 
+    where room_number = in_room_number;
+
+    -- Write changes to logs
+    INSERT INTO clean_log (room_number, employee_id) 
+    VALUES (in_room_number,in_emp_id);
+    INSERT INTO room_status_log (room_number, employee_id, new_status) 
+    VALUES (in_room_number,in_emp_id, @clean_status);
+
+end $$
+
+DELIMITER ;
 
 
- 
+
+-- Add random Rooms:
+DELIMITER $$
+CREATE PROCEDURE add_rooms(
+    IN rooms_count int
+)
+BEGIN
+    SET @my_counter = 0;
+ WHILE @my_counter < rooms_count DO
+    insert into room (room_type, building_id, floor, room_status) values (floor(rand()*4+1), floor(rand()*3+1), floor(rand()*5+1),floor(rand()*3+1));
+    SET @my_counter = @my_counter + 1;
+END WHILE;
+end $$
+DELIMITER ;
+
+
+use hotel_project;
+
+DELIMITER //
+CREATE FUNCTION room_status(in_room_number integer) RETURNS VARCHAR(50)
+BEGIN
+    declare room_status_res VARCHAR(50);
+    select status_name INTO room_status_res
+    from room 
+    INNER join room_status rs 
+    ON room_status = rs.room_status_id
+    where room_number = in_room_number;
+    return room_status_res;
+END; //
+DELIMITER ;
+
+SELECT room_status(15);
+
+
+
+
+-- query 3 all orders in  last 2 weeks  
+
+SELECT *
+FROM orders
+WHERE order_time  BETWEEN GETDATE()-14 AND GETDATE();
+
+
+-- query 4 cleaned the most rooms
+
+select e.employee_id, e.first_name, e.last_name, count(*) num_of_room
+from emplyoee e
+inner join clean_log c
+on e.employee_id = c.employee_id
+
+-- Check that dates of the order are leagle
+delimiter $$
+create trigger CHK_date before insert on orders
+for each row
+begin
+	IF NEW.check_in >= NEW.check_out
+	THEN
+	    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Illegal Dates: check in cannot be after check out!';
+	END IF;
+	end; $$
+delimiter ;
+
