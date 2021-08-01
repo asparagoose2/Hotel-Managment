@@ -39,7 +39,7 @@ CALL add_rooms(30);
 select *, DATE_ADD(check_in,  INTERVAL floor(rand()*11 +1) DAY) check_out from (SELECT FROM_UNIXTIME(RAND() * (UNIX_TIMESTAMP() - UNIX_TIMESTAMP('2020-01-01')) + UNIX_TIMESTAMP('2020-01-01')) check_in) as f;
 
 -- Insert random order
-CALL addOrder(30);
+CALL addOrder(10);
 -- Or one by one
 insert into orders (check_in, customer_id, employee_id,  check_out)  select  *,floor(rand()*11+1),floor(rand()*10+1), DATE_ADD(check_in,  INTERVAL floor(rand()*10 +1) DAY) check_out from (SELECT FROM_UNIXTIME(RAND() * (UNIX_TIMESTAMP() - UNIX_TIMESTAMP('2020-01-01')) + UNIX_TIMESTAMP('2020-01-01')) check_in) as f;
 
@@ -51,3 +51,7 @@ insert into room_status_log  (time, room_number, employee_id, new_status)  selec
 -- Add clean log
 insert into clean_log (time, room_number, employee_id)  select  *,floor(rand()*10+1),floor(rand()*10+1) from (SELECT FROM_UNIXTIME(RAND() * (UNIX_TIMESTAMP() - UNIX_TIMESTAMP('2020-01-01')) + UNIX_TIMESTAMP('2020-01-01'))) as f;
 
+-- Add rooms to orders
+insert into order_rooms values (4,1), (3,1), (1,1);
+insert into order_rooms values (5,2), (7,2), (1,2);
+insert into order_rooms values (2,6), (9,6), (11,6);
