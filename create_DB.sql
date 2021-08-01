@@ -219,25 +219,6 @@ BEGIN
 END; //
 DELIMITER ;
 
-SELECT room_status(15);
-
-
-
-
--- query 3 all orders in  last 2 weeks  
-
-SELECT *
-FROM orders
-WHERE order_time  BETWEEN GETDATE()-14 AND GETDATE();
-
-
--- query 4 cleaned the most rooms
-
-select e.employee_id, e.first_name, e.last_name, count(*) num_of_room
-from emplyoee e
-inner join clean_log c
-on e.employee_id = c.employee_id
-
 -- Check that dates of the order are leagle
 delimiter $$
 create trigger CHK_date before insert on orders
